@@ -1,3 +1,4 @@
+package tetris;
 /**
  * The class <b>Point</b> helps keeping the position of the shape in the 
  * Tetris game. They have a x, y coordinate and keep the kind of shape that

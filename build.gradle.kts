@@ -29,7 +29,7 @@ dependencies {
 
 javafx {
     version = "16"
-    modules("javafx.controls", "javafx.fxml")
+    modules("javafx.controls", "javafx.fxml", "javafx.media")
 }
 
 group = "kaantelypeli"
@@ -53,5 +53,5 @@ tasks.withType<JavaCompile>() {
 }
 
 application {
-    mainClass.set("kaantelypeli.ui.Main")
+    mainClass.set("tetris.Main")
 }

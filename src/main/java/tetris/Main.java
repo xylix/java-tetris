@@ -1,3 +1,5 @@
+package tetris;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -285,14 +287,15 @@ public class Main extends Application {
         color2.put(7, Color.rgb(251, 187, 49));
         colors.put(1, color2);
 
+        ClassLoader classLoader = getClass().getClassLoader();
         // Background music setup
-        mainThemePlayer = new MediaPlayer(new Media(new File("resources/Tetris.mp3").toURI().toString()));
+        mainThemePlayer = new MediaPlayer(new Media(new File(classLoader.getResource("Tetris.mp3").getFile()).toURI().toString()));
         mainThemePlayer.setOnEndOfMedia(() -> {
             mainThemePlayer.seek(Duration.ZERO);
         });
 
         // Sound effect setup
-        soundEffectPlayer = new MediaPlayer(new Media(new File("resources/gameOver.mp3").toURI().toString()));
+        soundEffectPlayer = new MediaPlayer(new Media(new File(classLoader.getResource("gameOver.mp3").getFile()).toURI().toString()));
 
         // Application icon
         primaryStage.getIcons().add(new Image("file:resources/tetris.png"));
