@@ -11,12 +11,12 @@ class Point {
     /**
      * Coordinates of the point
      */
-    private int x, y;
+    public int x, y;
 
     /**
      * Type of shape of the point
      */
-    private int type;
+    public int type;
 
     /**
      * Constructor of the Point class specifying the coordinates of the point
@@ -51,69 +51,6 @@ class Point {
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    /**
-     * Getter for type
-     * 
-     * @return the type of the point
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * Setter for x
-     * 
-     * @param x the new x coordinate of the point
-     */
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    /**
-     * Getter for x
-     * 
-     * @return the x coordinate of the point
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Modify the value of the x coordinate
-     * 
-     * @param mod the value to be added to the x coordinate
-     */
-    public void modX(int mod) {
-        x += mod;
-    }
-
-    /**
-     * Setter for y
-     * 
-     * @param y the new y coordinate of the point
-     */
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    /**
-     * Getter for y
-     * 
-     * @return the y coordinate of the point
-     */
-    public int getY() {
-        return y;
-    }
-
-    /**
-     * Modify the value of the y coordinate
-     * 
-     * @param mod the value to be added to the y coordinate
-     */
-    public void modY(int mod) {
-        y += mod;
     }
 
     @Override

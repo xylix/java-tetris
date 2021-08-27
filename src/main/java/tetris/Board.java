@@ -75,12 +75,12 @@ class Board {
     public void createCurrentShape() {
         int num = rand.nextInt(8);
 
-        if (num == 7 || (currentShape != null && num == currentShape.getType())) {
+        if (num == 7 || (currentShape != null && num == currentShape.type)) {
             num = rand.nextInt(7);
         }
 
         if (currentShape != null) {
-            points.addAll(currentShape.getPoints());
+            points.addAll(currentShape.points);
         }
 
         currentShape = new Shape(num + 1);
@@ -92,8 +92,8 @@ class Board {
      * @return true if there are point(s) down the current shape
      */
     private boolean hasPointsDown() {
-        for (Point i : currentShape.getPoints()) {
-            if (points.contains(new Point(i.getX(), i.getY() + 1))) {
+        for (Point i : currentShape.points) {
+            if (points.contains(new Point(i.x, i.y + 1))) {
                 return true;
             }
         }
@@ -107,8 +107,9 @@ class Board {
      * @return true if there are point(s) right of the current shape
      */
     private boolean hasPointsRight() {
-        for (Point i : currentShape.getPoints()) {
-            if (points.contains(new Point(i.getX() + 1, i.getY()))) {
+        return currentShape.points.stream().anyMatch(predicate)
+        for (Point i : currentShape.points) {
+            if (points.contains(new Point(i.x + 1, i.y))) {
                 return true;
             }
         }
@@ -122,8 +123,8 @@ class Board {
      * @return true if there are point(s) left of the current shape
      */
     private boolean hasPointsLeft() {
-        for (Point i : currentShape.getPoints()) {
-            if (points.contains(new Point(i.getX() - 1, i.getY()))) {
+        for (Point i : currentShape.points) {
+            if (points.contains(new Point(i.x - 1, i.y))) {
                 return true;
             }
         }
@@ -137,8 +138,8 @@ class Board {
      * @return true if the current shape is close to the top
      */
     private boolean closeToTopBorder() {
-        for (Point i : currentShape.getPoints()) {
-            if (i.getY() == 0) {
+        for (Point i : currentShape.points) {
+            if (i.y == 0) {
                 return true;
             }
         }
@@ -152,8 +153,8 @@ class Board {
      * @return true if the current shape is close to the left
      */
     private boolean closeToLeftBorder() {
-        for (Point i : currentShape.getPoints()) {
-            if (i.getX() == 0) {
+        for (Point i : currentShape.points) {
+            if (i.x == 0) {
                 return true;
             }
         }
@@ -167,8 +168,8 @@ class Board {
      * @return true if the current shape is close to the right
      */
     private boolean closeToRightBorder() {
-        for (Point i : currentShape.getPoints()) {
-            if (i.getX() == WIDTH - 1) {
+        for (Point i : currentShape.points) {
+            if (i.x == WIDTH - 1) {
                 return true;
             }
         }
@@ -182,8 +183,8 @@ class Board {
      * @return true if the current shape is close to the bottom
      */
     private boolean closeToBottomBorder() {
-        for (Point i : currentShape.getPoints()) {
-            if (i.getY() == HEIGHT - 1) {
+        for (Point i : currentShape.points) {
+            if (i.y == HEIGHT - 1) {
                 return true;
             }
         }
@@ -201,7 +202,7 @@ class Board {
         List<Point> rotated = currentShape.getRotatePoints();
 
         for (Point i : rotated) {
-            if (i.getX() >= WIDTH || i.getY() >= HEIGHT || i.getX() < 0 || i.getY() < 0 || points.contains(i)) {
+            if (i.x >= WIDTH || i.y >= HEIGHT || i.x < 0 || i.y < 0 || points.contains(i)) {
                 return false;
             }
         }
@@ -292,12 +293,12 @@ class Board {
                         mostBottomLine = i;
                     }
 
-                    Predicate<Point> pointsPredicate = p -> p.getY() == i;
+                    Predicate<Point> pointsPredicate = p -> p.y == i;
                     points.removeIf(pointsPredicate);
 
                     for (int j = 0; j < points.size(); j++) {
-                        if (points.get(j).getY() < i) {
-                            points.get(j).modY(1);
+                        if (points.get(j).y < i) {
+                            points.get(j).y += 1;
                         }
                     }
                 }
@@ -320,8 +321,8 @@ class Board {
                         if (numOfEmpty != 0) {
                             gravityTriggerd = false;
                             for (int j = 0; j < points.size(); j++) {
-                                if (points.get(j).getX() == i && points.get(j).getY() <= mostBottomLine) {
-                                    points.get(j).modY(numOfEmpty);
+                                if (points.get(j).x == i && points.get(j).y <= mostBottomLine) {
+                                    points.get(j).y += numOfEmpty;
                                     gravityTriggerd = true;
                                 }
                             }
@@ -390,7 +391,7 @@ class Board {
         List<Point> points = new ArrayList<Point>();
 
         points.addAll(this.points);
-        points.addAll(currentShape.getPoints());
+        points.addAll(currentShape.points);
 
         Set<Point> set = new HashSet<Point>();
         set.addAll(points);
@@ -488,11 +489,11 @@ class Board {
     public String toString() {
         int[][] board = new int[HEIGHT][WIDTH];
         for (Point i : points) {
-            board[i.getY()][i.getX()] = i.getType();
+            board[i.y][i.x] = i.type;
         }
 
-        for (Point i : currentShape.getPoints()) {
-            board[i.getY()][i.getX()] = currentShape.getType();
+        for (Point i : currentShape.points) {
+            board[i.y][i.x] = currentShape.type;
         }
 
         String str = "";

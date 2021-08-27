@@ -32,9 +32,9 @@ javafx {
     modules("javafx.controls", "javafx.fxml", "javafx.media")
 }
 
-group = "kaantelypeli"
-version = "0.4.0"
-description = "kaantelypeli"
+group = "tetris"
+version = "0.1.0"
+description = "xylix java tetris"
 
 java {
     toolchain {

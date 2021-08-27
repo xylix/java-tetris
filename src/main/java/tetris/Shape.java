@@ -2,6 +2,19 @@ package tetris;
 import java.util.ArrayList;
 import java.util.List;
 
+enum Rotation {
+    NEUTRAL(0),
+    RIGHT(1),
+    DOWN(2),
+    LEFT(3);
+    public int value;
+
+    private Rotation(int value) {
+        this.value = value;
+    }
+}
+
+
 /**
  * The class <b>Shape</b> represents the tetrominos used in Tetris. This class
  * can create them, rotate them, and move them. A list of points are alse kept
@@ -11,28 +24,29 @@ import java.util.List;
  */
 class Shape {
 
+
     /**
      * Contains the type of shape (an integer from 1 to 7)
      * 
-     *  * 1 -- L 
-     * 2 -- l 
+     * 1 -- L 
+     * 2 -- I 
      * 3 -- T 
      * 4 -- S 
      * 5 -- Z 
      * 6 -- J 
      * 7 -- O
      */
-    private int type;
+    public int type;
 
     /**
      * Conatins the current rotation orientation (an integer from 0 to 3)
      */
-    private int rotation;
+    public int rotation;
 
     /**
      * List containing the points of the shape
      */
-    private List<Point> points;
+    public List<Point> points;
 
     /**
      * Constructor of the Shape class specifying the type of the shape
@@ -57,7 +71,7 @@ class Shape {
         this.rotation = shape.rotation;
         this.points = new ArrayList<Point>(shape.points.size());
         for (Point i : shape.points) {
-            this.points.add(new Point(i.getX(), i.getY(), type));
+            this.points.add(new Point(i.x, i.y, type));
         }
     }
 
@@ -99,7 +113,7 @@ class Shape {
      */
     public void moveDown() {
         for (Point i : points) {
-            i.modY(1);
+            i.y = i.y + 1;
         }
     }
 
@@ -108,7 +122,7 @@ class Shape {
      */
     public void moveLeft() {
         for (Point i : points) {
-            i.modX(-1);
+            i.x -= 1;
         }
     }
 
@@ -117,7 +131,7 @@ class Shape {
      */
     public void moveRight() {
         for (Point i : points) {
-            i.modX(1);
+            i.x += 1;
         }
     }
 
@@ -132,33 +146,33 @@ class Shape {
             int lowY = 100;
 
             for (Point i : points) {
-                if (i.getX() < lowX) {
-                    lowX = i.getX();
+                if (i.x < lowX) {
+                    lowX = i.x;
                 }
 
-                if (i.getY() < lowY) {
-                    lowY = i.getY();
+                if (i.y < lowY) {
+                    lowY = i.y;
                 }
             }
 
             if (type == 2) {
                 for (Point i : points) {
                     if (rotation == 0) {
-                        i.setLocation(i.getY() - lowY + lowX + 2, i.getX() - lowX + lowY - 1);
+                        i.setLocation(i.y - lowY + lowX + 2, i.x - lowX + lowY - 1);
                     } else if (rotation == 1) {
-                        i.setLocation(i.getY() - lowY + lowX - 2, i.getX() - lowX + lowY + 2);
+                        i.setLocation(i.y - lowY + lowX - 2, i.x - lowX + lowY + 2);
                     } else if (rotation == 2) {
-                        i.setLocation(i.getY() - lowY + lowX + 1, i.getX() - lowX + lowY - 2);
+                        i.setLocation(i.y - lowY + lowX + 1, i.x - lowX + lowY - 2);
                     } else {
-                        i.setLocation(i.getY() - lowY + lowX - 1, i.getX() - lowX + lowY + 1);
+                        i.setLocation(i.y - lowY + lowX - 1, i.x - lowX + lowY + 1);
                     }
                 }
             } else {
                 for (Point i : points) {
                     if (rotation == 1 || rotation == 2) {
-                        i.setLocation(2 - (i.getY() - lowY) + lowX - 1, (i.getX() - lowX - 1 + (rotation % 2 * 2)) + lowY);
+                        i.setLocation(2 - (i.y - lowY) + lowX - 1, (i.x - lowX - 1 + (rotation % 2 * 2)) + lowY);
                     } else {
-                        i.setLocation(2 - (i.getY() - lowY) + lowX, (i.getX() - lowX) + lowY);
+                        i.setLocation(2 - (i.y - lowY) + lowX, (i.x - lowX) + lowY);
                     }
                 }
             }
@@ -180,30 +194,14 @@ class Shape {
         return rotated.points;
     }
 
-    /**
-     * Getter of type
-     * 
-     * @return type of shape
-     */
-    public int getType() {
-        return type;
-    }
 
-    /**
-     * Getter for points
-     * 
-     * @return list of points
-     */
-    public List<Point> getPoints() {
-        return points;
-    }
 
     @Override
     public String toString() {
         String str = "";
 
         for (Point i : points) {
-            str += "x:" + i.getX() + " y: " + i.getY() + "\n";
+            str += "x:" + i.x + " y: " + i.y + "\n";
         }
 
         return str;

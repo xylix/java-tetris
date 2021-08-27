@@ -176,7 +176,7 @@ public class Main extends Application {
                         });
                         
                         // Sets the color of the square according to its point type
-                        square.setFill(colors.get(colorChoice).get(points.get(points.indexOf(currentPoint)).getType()));
+                        square.setFill(colors.get(colorChoice).get(points.get(points.indexOf(currentPoint)).type));
 
                         cellGroup.getChildren().addAll(square, topShade, bottomShade);
                     } else {
