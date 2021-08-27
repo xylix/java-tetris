@@ -1,0 +1,43 @@
+{
+    "entities": [{
+            "type": "player",
+            "x": 32,
+            "y": 32
+        }, {
+            "type": "wall",
+            "x": 96,
+            "y": 48,
+            "width": 16,
+            "height": 16
+        }, {
+            "type": "wall",
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "height": 16
+        }, {
+            "type": "wall",
+            "x": 0,
+            "y": 224,
+            "width": 240,
+            "height": 16
+        }, {
+            "type": "wall",
+            "x": 0,
+            "y": 0,
+            "width": 16,
+            "height": 240
+        }, {
+            "type": "wall",
+            "x": 224,
+            "y": 0,
+            "width": 16,
+            "height": 240
+        }, {
+            "type": "victory",
+            "x": 96,
+            "y": 16
+        }],
+    "won": false,
+    "lost": false
+}

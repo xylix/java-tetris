@@ -1,0 +1,13 @@
+{
+    "entities": [{
+            "type": "player",
+            "x": 0,
+            "y": 16
+        }, {
+            "type": "victory",
+            "x": 0,
+            "y": 24
+        }],
+    "won": false,
+    "lost": false
+}

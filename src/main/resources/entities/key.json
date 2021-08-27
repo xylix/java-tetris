@@ -1,0 +1,9 @@
+{
+    "width": 14,
+    "height": 14,
+    "passable": "true",
+    "movable": "true",
+    "actionMap": {
+        "door": "open"
+    }
+}
