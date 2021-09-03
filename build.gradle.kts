@@ -55,3 +55,7 @@ tasks.withType<JavaCompile>() {
 application {
     mainClass.set("tetris.Main")
 }
+
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
