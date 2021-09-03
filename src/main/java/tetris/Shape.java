@@ -56,9 +56,7 @@ class Shape {
     public Shape(int num) {
         this.type = num;
         this.rotation = 0;
-        this.points = new ArrayList<Point>();
-
-        createPoints();        
+        this.points = createPoints();
     }
 
     /**
@@ -69,10 +67,7 @@ class Shape {
     public Shape(Shape shape) {
         this.type = shape.type;
         this.rotation = shape.rotation;
-        this.points = new ArrayList<Point>(shape.points.size());
-        for (Point i : shape.points) {
-            this.points.add(new Point(i.x, i.y, type));
-        }
+        this.points = shape.points.stream().map(point -> new Point(point)).toList();
     }
 
     /**
@@ -80,32 +75,35 @@ class Shape {
      * 
      * Based on http://tetris.wikia.com/wiki/SRS
      */
-    private void createPoints() {
+    private List<Point> createPoints() {
+        var newPoints = new ArrayList<Point>();
+        
         if (type != 7 && type != 4 && type != 1 && type != 3) {
-            this.points.add(new Point(3, 0, type));
+            newPoints.add(new Point(3, 0, type));
         }
 
         if (type != 1 && type != 6) {
-            this.points.add(new Point(4, 0, type));
+            newPoints.add(new Point(4, 0, type));
         }
 
         if (type != 5 && type != 6 && type != 3) {
-            this.points.add(new Point(5, 0, type));
+            newPoints.add(new Point(5, 0, type));
         }
 
         if (type == 2) {
-            this.points.add(new Point(6, 0, type));
+            newPoints.add(new Point(6, 0, type));
         } else {
-            this.points.add(new Point(4, 1, type));
+            newPoints.add(new Point(4, 1, type));
         }
 
         if (type != 4 && type != 2) {
-            this.points.add(new Point(5, 1, type));
+            newPoints.add(new Point(5, 1, type));
         }
 
         if (type == 1 || type == 4 || type == 6 || type == 3) {
-            this.points.add(new Point(3, 1, type));
+            newPoints.add(new Point(3, 1, type));
         }
+        return newPoints;
     } 
 
     /**

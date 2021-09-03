@@ -22,9 +22,6 @@ import java.util.Collection;
  */
 class Board {
 
-    /**
-     * Keeps the state of the game
-     */
     private boolean gameOver;
 
     /**
