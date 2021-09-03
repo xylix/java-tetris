@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * The class <b>Board</b> represents the board/grid used in Tetris. This class
@@ -22,7 +26,7 @@ class Board {
      * Keeps the state of the game
      */
     private boolean gameOver;
-    
+
     /**
      * True if the gravity feature is on (gravity on blocks above cleared lines with space underneath the cleared line)
      */
@@ -86,19 +90,27 @@ class Board {
         currentShape = new Shape(num + 1);
     }
 
+    private List<Point> generatePoints(List<Point> points, Function<Point, Point> mutation) {
+        return points.stream()
+            .map(mutation)
+            .collect(Collectors.toList());
+    }
+
+
+    private <T> boolean anyMatch(Collection<T> collection, Predicate<T> predicate) {
+        return collection.parallelStream().anyMatch(predicate);
+    }
+
     /**
      * Helper method for collision detection
      * 
      * @return true if there are point(s) down the current shape
      */
     private boolean hasPointsDown() {
-        for (Point i : currentShape.points) {
-            if (points.contains(new Point(i.x, i.y + 1))) {
-                return true;
-            }
-        }
-
-        return false;
+        Function<Point, Point> mutation = point -> new Point(point.x, point.y + 1);
+        Predicate<Point> predicate = mutatedPoint -> currentShape.points.contains(mutatedPoint);
+        var oneHigherPoints = generatePoints(points, mutation);
+        return anyMatch(oneHigherPoints, predicate);
     }
 
     /**
@@ -107,7 +119,6 @@ class Board {
      * @return true if there are point(s) right of the current shape
      */
     private boolean hasPointsRight() {
-        return currentShape.points.stream().anyMatch(predicate)
         for (Point i : currentShape.points) {
             if (points.contains(new Point(i.x + 1, i.y))) {
                 return true;
