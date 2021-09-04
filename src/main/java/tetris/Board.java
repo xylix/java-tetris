@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -27,12 +26,14 @@ class Board {
     /**
      * True if the gravity feature is on (gravity on blocks above cleared lines with space underneath the cleared line)
      */
-    private boolean gravity;
+    public boolean gravity;
 
     /**
      * Stats about the current game
      */
-    private int numClearedLines, level, score, timePerBlock;
+    private int numClearedLines, level, timePerBlock;
+
+    public int score;
 
     /**
      * A list of points of the fallen shapes
@@ -67,13 +68,13 @@ class Board {
         this.gravity = true;
         this.timePerBlock = 800;
 
-        createCurrentShape();
+        currentShape = createShape();
     }
 
     /**
      * Creates a new shape randomly and sets it as the current shape
      */
-    public void createCurrentShape() {
+    public Shape createShape() {
         int num = rand.nextInt(8);
 
         if (num == 7 || (currentShape != null && num == currentShape.type)) {
@@ -84,7 +85,7 @@ class Board {
             points.addAll(currentShape.points);
         }
 
-        currentShape = new Shape(num + 1);
+        return new Shape(num + 1);
     }
 
     private List<Point> generatePoints(List<Point> points, Function<Point, Point> mutation) {
@@ -94,65 +95,41 @@ class Board {
     }
 
 
-    private <T> boolean anyMatch(Collection<T> collection, Predicate<T> predicate) {
+    private boolean anyMatch(Collection<Point> collection) {
+        Predicate<Point> predicate = mutatedPoint -> currentShape.points.contains(mutatedPoint);
         return collection.parallelStream().anyMatch(predicate);
     }
 
     /**
-     * Helper method for collision detection
-     * 
      * @return true if there are point(s) down the current shape
      */
     private boolean hasPointsDown() {
-        Function<Point, Point> mutation = point -> new Point(point.x, point.y + 1);
-        Predicate<Point> predicate = mutatedPoint -> currentShape.points.contains(mutatedPoint);
-        var oneHigherPoints = generatePoints(points, mutation);
-        return anyMatch(oneHigherPoints, predicate);
+        var oneLowerPoints = generatePoints(points, point -> new Point(point.x, point.y + 1));
+        return anyMatch(oneLowerPoints);
     }
 
     /**
-     * Helper method for collision detection
-     * 
      * @return true if there are point(s) right of the current shape
      */
     private boolean hasPointsRight() {
-        for (Point i : currentShape.points) {
-            if (points.contains(new Point(i.x + 1, i.y))) {
-                return true;
-            }
-        }
-
-        return false;
+        Function<Point, Point> mutation = point -> new Point(point.x + 1, point.y);
+        var oneHigherPoints = generatePoints(points, mutation);
+        return anyMatch(oneHigherPoints);
     }
 
     /**
-     * Helper method for collision detection
-     * 
      * @return true if there are point(s) left of the current shape
      */
     private boolean hasPointsLeft() {
-        for (Point i : currentShape.points) {
-            if (points.contains(new Point(i.x - 1, i.y))) {
-                return true;
-            }
-        }
-
-        return false;
+        var oneLowerPoints = generatePoints(points, point -> new Point(point.x - 1, point.y));
+        return anyMatch(oneLowerPoints);
     }
 
     /**
-     * Helper method for ending the game
-     * 
      * @return true if the current shape is close to the top
      */
     private boolean closeToTopBorder() {
-        for (Point i : currentShape.points) {
-            if (i.y == 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return currentShape.points.stream().anyMatch(p -> p.y == 0);
     }
 
     /**
@@ -161,13 +138,7 @@ class Board {
      * @return true if the current shape is close to the left
      */
     private boolean closeToLeftBorder() {
-        for (Point i : currentShape.points) {
-            if (i.x == 0) {
-                return true;
-            }
-        }
-
-        return false;
+        return currentShape.points.stream().anyMatch(p -> p.x == 0);
     }
 
     /**
@@ -176,13 +147,7 @@ class Board {
      * @return true if the current shape is close to the right
      */
     private boolean closeToRightBorder() {
-        for (Point i : currentShape.points) {
-            if (i.x == WIDTH - 1) {
-                return true;
-            }
-        }
-
-        return false;
+        return currentShape.points.stream().anyMatch(p -> p.x == WIDTH - 1);
     }
 
     /**
@@ -191,13 +156,7 @@ class Board {
      * @return true if the current shape is close to the bottom
      */
     private boolean closeToBottomBorder() {
-        for (Point i : currentShape.points) {
-            if (i.y == HEIGHT - 1) {
-                return true;
-            }
-        }
-
-        return false;
+        return currentShape.points.stream().anyMatch(p -> p.y == HEIGHT - 1);
     }
 
     /**
@@ -256,7 +215,7 @@ class Board {
             if (closeToTopBorder()) {
                 gameOver = true;
             } else {
-                createCurrentShape();
+                currentShape = createShape();
                 removeLines();
             }
         }
@@ -303,6 +262,8 @@ class Board {
 
                     Predicate<Point> pointsPredicate = p -> p.y == i;
                     points.removeIf(pointsPredicate);
+
+                    // points.stream().forEach(point -> point.y += 1);
 
                     for (int j = 0; j < points.size(); j++) {
                         if (points.get(j).y < i) {
@@ -355,15 +316,12 @@ class Board {
      * @return the score for the that number of lines
      */
     private int calculateCurrentScore(int num) {
-        int baseNum = 40;
-
-        if (num == 2) {
-            baseNum = 100;
-        } else if (num == 3) {
-            baseNum = 300;
-        } else if (num == 4) {
-            baseNum = 1000;
-        }
+        int baseNum = switch (num) {
+            case 2 -> 100;
+            case 3 -> 300;
+            case 4 -> 1000;
+            default -> 40;
+        };
 
         return baseNum * (level + 1);
     }
@@ -392,7 +350,7 @@ class Board {
     /**
      * Returns a list of points
      * 
-     * @return list containing all the points on the board (including the current
+     * @return new list containing all the points on the board (including the current
      *         shape)
      */
     public List<Point> getPoints() {
@@ -440,24 +398,6 @@ class Board {
     }
 
     /**
-     * Getter of gravity
-     * 
-     * @return true if gravity is on, false otherwise
-     */
-    public boolean getGravity() {
-        return gravity;
-    }
-
-    /**
-     * Setter for gravity
-     * 
-     * @param gravity the new value of gravity
-     */
-    public void setGravity(boolean gravity) {
-        this.gravity = gravity;
-    }
-
-    /**
      * Getter of gameOver
      * 
      * @return true if the game is finished
@@ -482,15 +422,6 @@ class Board {
      */
     public int getTimePerBlock() {
         return timePerBlock;
-    }
-
-    /**
-     * Getter of score
-     * 
-     * @return the score of the current game
-     */
-    public int getScore() {
-        return score;
     }
 
     @Override
